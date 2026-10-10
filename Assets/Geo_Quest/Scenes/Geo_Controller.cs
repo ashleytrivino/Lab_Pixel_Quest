@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Geo_Controller : MonoBehaviour
 {
@@ -8,45 +10,54 @@ public class Geo_Controller : MonoBehaviour
     private string _Ba = "Hello ";
     private int _num = 3;
     private Rigidbody2D rb;
+    public int _speed = 5;
+    public string _NextLevel = "Level_2";
+    private SpriteRenderer _spriteRenderer;
     void Start()
     {
         Debug.Log(_Ba + "World");
         _Ba = "Goodbye ";
         Debug.Log(_Ba + "World");
         rb = GetComponent<Rigidbody2D>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
+        float xInput = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector2(xInput * _speed, rb.velocity.y);
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            rb.velocity = new Vector2(-1, rb.velocity.y);
+            _spriteRenderer.color = Color.red;
         }
-        else if (Input.GetKeyDown(KeyCode.D))
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            rb.velocity = new Vector2(1, rb.velocity.y);
+            _spriteRenderer.color = Color.green;
         }
-          //   rb.velocity = new Vector2(-1, rb.velocity.y);
-        // Debug.Log(_num);
-        // num++;
-        /*
-        if (Input.GetKeyDown(KeyCode.W))
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            transform.position += new Vector3(0, 1, 0);
+            _spriteRenderer.color = Color.blue;
         }
-        else if (Input.GetKeyDown(KeyCode.S))
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        switch (collision.tag)
         {
-            transform.position += new Vector3(0, -1, 0);
+            case "Death":
+                {
+                    string thisLevel = SceneManager.GetActiveScene().name;
+                    SceneManager.LoadScene(thisLevel);
+                    break;
+                }
+            case "Finish":
+                {
+                    SceneManager.LoadScene(_NextLevel);
+                    break;
+                }
+
         }
-        else if (Input.GetKeyDown(KeyCode.A))
-        {
-            transform.position += new Vector3(-1, 0, 0);
-        }
-        else if (Input.GetKeyDown(KeyCode.D))
-        {
-            transform.position += new Vector3(1, 0, 0);
-        }
-        */
     }
 }
